@@ -1,0 +1,50 @@
+server:
+  port: 8001 #服务端口
+
+#eureka配置
+eureka:
+  client:
+    #表示是否将自己注册进eureka  默认为true
+    register-with-eureka: true
+    #是否从EurekaServer中抓取已有的注册信息，默认为true，单点无所谓，集群必须设置true才能和ribbon使用负载均衡
+    fetch-registry: true
+    service-url:
+      #单机配置
+      defaultZone: http://127.0.0.1:8170/eureka/
+      #集群配置
+      #defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+  instance:
+    #服务名称修改
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}/${spring.application.name}
+    #访问路径可以显示ip地址
+    prefer-ip-address: true
+
+#spring相关配置
+spring:
+  application:
+    name: cloud-provider-payment  #服务名
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource  #当前数据源操作类型
+    driver-class-name: org.gjt.mm.mysql.Driver  #数据库驱动包
+    url: jdbc:mysql://localhost:3306/test?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: root
+
+#xxl-job配置
+#xxl:
+#  job:
+#    admin:
+#      addresses: http://127.0.0.1:8142/xxl-job-admin
+#    executor:
+#      appname: job-executor-cy
+#      address:
+#      ip:
+#      port: 9144
+#      logpath: /data/applogs/xxl-job/jobhandler
+#      logretentiondays: 30
+#    accessToken: default_token
+
+#mybatis:配置
+mybatis:
+  mapperLocations: classpath:dao/*.xml
+  type-aliases-package: com.csii.pojo    # 所有pojo别名类所在包

@@ -1,0 +1,39 @@
+server:
+  port: 9527
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}/${spring.application.name}
+  client:
+    service-url:
+      register-with-eureka: true
+      fetch-registry: true
+      defaultZone: http://127.0.0.1:8170/eureka/
+
+#可以看到网关Gateway成功的注册了注册中心，那网关如何做映射呢？
+#那我们以cloud-provide-payment生产者服务为例来映射一下。打开PaymentControler控制层，对get和lb两个方法做进行演示，
+#因为我们之前访问都是http://localhost:8001/payment/get/1的访问，但是我们访问的时候是将我们的端口8001，暴露在了外边，不安全，
+#但是我们不想暴露真的8001端口号，希望在外面8001外边包上一层我们的Gateway的端口9527，这就需要在yml配置新增路由配置。如下图：
+#使用了filter之后，url要输入：http://localhost:9527/payment/get/2?uname=xx&token=1
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true  #开启从注册中心动态创建路由的功能，利用微服务名称进行路由
+      routes:
+        - id: payment_route   # 路由的id,没有规定规则但要求唯一,建议配合服务名
+          #uri: http://localhost:8001  #匹配后提供服务的路由地址
+          #uri: 一般肯定是多台机器的组成集群，所以需要使用实例名来替代上面的，可能多个端口。lb的意思是load balance。这是 Spring Cloud 的一个特殊 URI 模式，用于实现服务发现和客户端负载均衡。 "CLOUD-PROVIDER-PAYMENT" → 服务名（从注册中心获取）
+          uri: lb://CLOUD-PROVIDER-PAYMENT
+          predicates:
+            - Path=/payment/get/** # 断言，路径相匹配的进行路由
+            #- After=2026-09-08T21:11:46.662+08:00[Asia/Shanghai] #断言在当前时间之后才可以访问
+            - After=2026-01-11T15:36:00.000+08:00[Asia/Shanghai] #断言在当前时间之后才可以访问
+        - id: payment_route2
+          #uri: http://localhost:8001
+          uri: lb://CLOUD-PROVIDER-PAYMENT
+          predicates:
+            - Path=/payment/lb/**   #断言,路径相匹配的进行路由

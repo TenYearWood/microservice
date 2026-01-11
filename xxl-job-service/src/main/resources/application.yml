@@ -1,0 +1,37 @@
+server:
+  port: 8144
+
+#eureka配置
+eureka:
+  client:
+    #表示是否将自己注册进eureka  默认为true
+    register-with-eureka: true
+    #是否从EurekaServer中抓取已有的注册信息，默认为true，单点无所谓，集群必须设置true才能和ribbon使用负载均衡
+    fetch-registry: true
+    service-url:
+      #单机配置
+      defaultZone: http://127.0.0.1:8170/eureka/
+  instance:
+    #服务名称修改
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}/${spring.application.name}
+    #访问路径可以显示ip地址
+    prefer-ip-address: true
+
+#spring相关配置
+spring:
+  application:
+    name: xxl-job-service  #服务名
+
+#xxl-job配置
+xxl:
+  job:
+    admin:
+      addresses: http://127.0.0.1:8142/xxl-job-admin
+    executor:
+      appname: job-executor-cy
+      address:
+      ip:
+      port: 9144
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: 30
+    accessToken: default_token

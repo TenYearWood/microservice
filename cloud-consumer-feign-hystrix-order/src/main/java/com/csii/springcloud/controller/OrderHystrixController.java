@@ -1,0 +1,63 @@
+package com.csii.springcloud.controller;
+
+import com.csii.springcloud.service.PaymentHystrixService;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * @description com.csii.springcloud.controller
+ * @author: chengyu
+ * @date: 2026-01-11 12:21
+ *
+ * DefauleProperties: 在类上加上默认使用全局的服务降级兜底的方法
+ */
+@RestController
+@Slf4j
+@DefaultProperties(defaultFallback = "payment_Global_FallbackMethod")
+public class OrderHystrixController {
+
+    @Autowired
+    private PaymentHystrixService paymentHystrixService;
+
+    @GetMapping("/consumer/hystrix/ok/{id}")
+    String paymentInfo_OK(@PathVariable("id") Integer id) {
+        return paymentHystrixService.paymentInfo_OK(id);
+    }
+
+
+    @GetMapping("/consumer/hystrix/timeout/{id}")
+    @HystrixCommand(fallbackMethod = "paymentTimeOutFallbackMethod", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000")
+    })
+    public String paymentInfo_TimeOut(@PathVariable("id") Integer id) {
+        //int age = 10/0;
+        return paymentHystrixService.paymentInfo_TimeOut(id);
+    }
+
+    /**
+     * 服务降级的兜底的方法
+     */
+    public String paymentTimeOutFallbackMethod(@PathVariable("id") Integer id) {
+        return "我是消费者80,对方支付系统繁忙请10秒种后再试或者自己运行出错请检查自己,o(╥﹏╥)o";
+    }
+
+    @GetMapping("/consumer/hystrix/timeout/global/{id}")
+    @HystrixCommand//默认的fallback注解
+    public String paymentInfo_TimeOutG(@PathVariable("id") Integer id) {
+        return paymentHystrixService.paymentInfo_TimeOut(id);
+    }
+
+    /**
+     * 全局fallback
+     * 全局的服务降级的兜底的方法
+     */
+    public String payment_Global_FallbackMethod() {
+        return "Global异常处理信息,请稍后重试.o(╥﹏╥)o";
+    }
+}
