@@ -1,0 +1,29 @@
+server:
+  port: 3355
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}/${spring.application.name}
+  client:
+    service-url:
+      register-with-eureka: true
+      fetch-registry: true
+      defaultZone: http://127.0.0.1:8170/eureka/
+
+spring:
+  application:
+    name: cloud-config-client
+  cloud:
+    #Config客户端配置
+    config:
+      label: main #分支名称 这里要写main，不能写master(启动会报错)，就保持和git上的分支名称一致
+      name: config #配置文件名称
+      profile: dev #读取后缀名称   上述3个综合：main分支上config-dev.yml的配置文件被读取http://localhost:3344/main/config-dev.yml
+      uri: http://localhost:3344 #配置中心地址
+
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

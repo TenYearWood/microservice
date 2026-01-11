@@ -20,6 +20,8 @@
         <module>cloud-consumer-feign-hystrix-order</module>
         <module>cloud-gateway</module>
         <module>xxl-job-service</module>
+        <module>cloud-config-center</module>
+        <module>cloud-config-client</module>
     </modules>
 
     <properties>
