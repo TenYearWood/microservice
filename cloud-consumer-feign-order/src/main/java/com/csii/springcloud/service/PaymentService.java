@@ -7,15 +7,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
- * @description com.csii.springcloud.service
+ * @description feignClient的使用
+ * value: 使用的哪个微服务
+ * path: 统一路径的前缀
  * @author: chengyu
  * @date: 2025-12-23 22:46
  */
 @Component
-@FeignClient(value ="microservice-payment")//使用Feign，使用哪个微服务
+@FeignClient(value ="microservice-provider-payment", path = "/payment")//使用Feign，使用哪个微服务
 public interface PaymentService {
 
-    @GetMapping("/payment/get/{id}")
+    @GetMapping("/get/{id}")
     CommonResult queryById(@PathVariable("id") Long id);
 
     /**
@@ -24,6 +26,6 @@ public interface PaymentService {
      * 但是我们的生产者服务确实需要处理复杂的业务，处理时间会超过1秒，就需要修改Openfeign默认等待的时间。
      * 需要在消费者的服务的yml文件进行设置。因为Feign集成了Ribbon，所以需要设置Ribbon的相关。
      */
-    @GetMapping("/payment/feign/timeout")
+    @GetMapping("/feign/timeout")
     String PaymentFeignTimeOut() throws InterruptedException;
 }
