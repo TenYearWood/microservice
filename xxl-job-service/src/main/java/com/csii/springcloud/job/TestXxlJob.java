@@ -2,7 +2,8 @@ package com.csii.springcloud.job;
 
 import com.csii.springcloud.config.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,8 +12,9 @@ import org.springframework.stereotype.Component;
  * @date: 2026-01-04 20:33
  */
 @Component
-@Slf4j
 public class TestXxlJob {
+
+    private static final Logger log = LoggerFactory.getLogger(TestXxlJob.class);
 
     @XxlJob("testHandler")
     public void testHandler() {

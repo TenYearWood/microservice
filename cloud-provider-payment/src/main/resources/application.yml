@@ -3,6 +3,11 @@ server:
 
 #eureka配置
 eureka:
+  instance:
+    #服务名称修改
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}/${spring.application.name}
+    #访问路径可以显示ip地址
+    prefer-ip-address: true
   client:
     #表示是否将自己注册进eureka  默认为true
     register-with-eureka: true
@@ -13,11 +18,6 @@ eureka:
       defaultZone: http://127.0.0.1:8170/eureka/
       #集群配置
       #defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
-  instance:
-    #服务名称修改
-    instance-id: ${spring.cloud.client.ip-address}:${server.port}/${spring.application.name}
-    #访问路径可以显示ip地址
-    prefer-ip-address: true
 
 #spring相关配置
 spring:

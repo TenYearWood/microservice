@@ -21,6 +21,13 @@ spring:
       profile: dev #读取后缀名称   上述3个综合：main分支上config-dev.yml的配置文件被读取http://localhost:3344/main/config-dev.yml
       uri: http://localhost:3344 #配置中心地址
 
+  # RabbitMQ相关配置
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
 # 暴露监控端点
 management:
   endpoints:
